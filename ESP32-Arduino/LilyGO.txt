@@ -1,0 +1,13 @@
+
+python3 -m venv $HOME/.esptool
+$HOME/.esptool/bin/pip install --no-cache-dir --upgrade pip esptool
+
+$HOME/.esptool/bin/esptool --verbose erase-flash
+$HOME/.esptool/bin/esptool --verbose flash-id
+$HOME/.esptool/bin/esptool --verbose chip-id
+$HOME/.esptool/bin/esptool --verbose read-flash-status
+$HOME/.esptool/bin/esptool --verbose get-security-info
+
+$HOME/.esptool/bin/esptool write-flash 0x0 LilyGO-T-Display-S3.bin
+
+$HOME/.esptool/bin/esptool write-flash 0x0 LilyGO-T-Dongle-S3.bin

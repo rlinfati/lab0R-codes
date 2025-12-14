@@ -1,0 +1,44 @@
+if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+
+set(GUROBI_INC ${CMAKE_CURRENT_SOURCE_DIR}/macos_universal2/include)
+set(GUROBIC_LIB ${CMAKE_CURRENT_SOURCE_DIR}/macos_universal2/lib/libgurobi95.dylib)
+set(GUROBICXX_LIB ${CMAKE_CURRENT_SOURCE_DIR}/macos_universal2/lib/libgurobi_c++.a)
+set(GUROBICXX_LID ${GUROBICXX_LIB})
+set(GUROBIC_DLL ${CMAKE_CURRENT_SOURCE_DIR}/macos_universal2/lib/libgurobi95.dylib)
+set(GUROBI_EXTRALIB "")
+
+elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
+
+set(GUROBI_INC ${CMAKE_CURRENT_SOURCE_DIR}/linux64/include)
+set(GUROBIC_LIB ${CMAKE_CURRENT_SOURCE_DIR}/linux64/lib/libgurobi95.so)
+set(GUROBICXX_LIB ${CMAKE_CURRENT_SOURCE_DIR}/linux64/lib/libgurobi_g++5.2.a)
+set(GUROBICXX_LID ${GUROBICXX_LIB})
+set(GUROBIC_DLL ${CMAKE_CURRENT_SOURCE_DIR}/linux64/lib/libgurobi95.so)
+set(GUROBI_EXTRALIB "pthread;m;dl")
+
+elseif (CMAKE_SYSTEM_NAME MATCHES "Windows")
+
+set(GUROBI_INC ${CMAKE_CURRENT_SOURCE_DIR}/win64/include)
+set(GUROBIC_LIB ${CMAKE_CURRENT_SOURCE_DIR}/win64/lib/gurobi95.lib)
+set(GUROBICXX_LIB ${CMAKE_CURRENT_SOURCE_DIR}/win64/lib/gurobi_c++md2019.lib)
+set(GUROBICXX_LID ${CMAKE_CURRENT_SOURCE_DIR}/win64/lib/gurobi_c++mdd2019.lib)
+set(GUROBIC_DLL ${CMAKE_CURRENT_SOURCE_DIR}/win64/bin/gurobi95.dll)
+set(GUROBI_EXTRALIB "")
+
+endif()
+
+add_library(gurobi-library SHARED IMPORTED GLOBAL)
+set_target_properties(gurobi-library PROPERTIES
+    IMPORTED_LOCATION ${GUROBIC_LIB}
+    IMPORTED_IMPLIB ${GUROBIC_LIB}
+    IMPORTED_NO_SONAME TRUE
+    INTERFACE_INCLUDE_DIRECTORIES ${GUROBI_INC}
+    INTERFACE_LINK_LIBRARIES "${GUROBI_EXTRALIB}")
+
+add_library(gurobi-cpp STATIC IMPORTED GLOBAL)
+set_target_properties(gurobi-cpp PROPERTIES
+    IMPORTED_LOCATION ${GUROBICXX_LIB}
+    IMPORTED_LOCATION_DEBUG ${GUROBICXX_LID}
+    INTERFACE_LINK_LIBRARIES "gurobi-library")
+
+file(COPY ${GUROBIC_DLL} DESTINATION ${CMAKE_BINARY_DIR})
